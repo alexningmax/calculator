@@ -1,0 +1,359 @@
+<html><body><meta charset="utf-8"><p></p><div align="left">
+ <span style="font-size:16">&lt;!DOCTYPE&nbsp;html&gt;</span>
+</div><div align="left">
+ <span style="font-size:16">&lt;html&nbsp;lang="zh-CN"&gt;</span>
+</div><div align="left">
+ <span style="font-size:16">&lt;head&gt;</span>
+</div><div align="left">
+ <span style="font-size:16"> &lt;meta&nbsp;charset="UTF-8"&nbsp;/&gt;</span>
+</div><div align="left">
+ <span style="font-size:16"> &lt;meta&nbsp;name="viewport"&nbsp;content="width=device-width,initial-scale=1.0,user-scalable=no"&gt;</span>
+</div><div align="left">
+ <span style="font-size:16"> &lt;meta&nbsp;name="apple-mobile-web-app-capable"&nbsp;content="yes"&gt;</span>
+</div><div align="left">
+ <span style="font-size:16"> &lt;title&gt;乒乓球落点计算器(含激光误差计算)&lt;/title&gt;</span>
+</div><div align="left">
+ <span style="font-size:16"> &lt;style&gt;</span>
+</div><div align="left">
+ <span style="font-size:16"> *{margin:0;padding:0;box-sizing:border-box;font-family:system-ui;}</span>
+</div><div align="left">
+ <span style="font-size:16"> body{background:#f0f4f8;padding:20px;}</span>
+</div><div align="left">
+ <span style="font-size:16"> .wrap{max-width:520px;margin:0&nbsp;auto;background:#fff;border-radius:20px;padding:25px;}</span>
+</div><div align="left">
+ <span style="font-size:16"> h2{text-align:center;margin-bottom:20px;color:#222;}</span>
+</div><div align="left">
+ <span style="font-size:16"> .row{margin-bottom:15px;}</span>
+</div><div align="left">
+ <span style="font-size:16"> label{display:block;margin-bottom:5px;color:#555;font-size:14px;}</span>
+</div><div align="left">
+ <span style="font-size:16"> input{width:100%;padding:10px;border:1px&nbsp;solid&nbsp;#ccd6e0;border-radius:8px;font-size:16px;}</span>
+</div><div align="left">
+ <span style="font-size:16"> .angle-disk{width:220px;height:220px;margin:20px&nbsp;auto;position:relative;touch-action:none;}</span>
+</div><div align="left">
+ <span style="font-size:16"> .disk-bg{width:100%;height:100%;border-radius:50%;background:#eef3f9;border:3px&nbsp;solid&nbsp;#b8c8e0;}</span>
+</div><div align="left">
+ <span style="font-size:16"> .line{position:absolute;top:50%;left:50%;width:100px;height:3px;background:#1677ff;transform-origin:center&nbsp;left;}</span>
+</div><div align="left">
+ <span style="font-size:16"> .dot{width:16px;height:16px;border-radius:50%;background:#fff;border:3px&nbsp;solid&nbsp;#1677ff;position:absolute;top:50%;left:50%;transform-origin:center&nbsp;left;touch-action:none;cursor:grab;}</span>
+</div><div align="left">
+ <span style="font-size:16"> .angle-txt{text-align:center;font-size:17px;margin:5px&nbsp;0;}</span>
+</div><div align="left">
+ <span style="font-size:16"> button{width:100%;padding:12px;background:#1677ff;color:#fff;border:none;border-radius:8px;font-size:16px;margin-top:5px;}</span>
+</div><div align="left">
+ <span style="font-size:16"> .resBox{margin-top:15px;padding:15px;background:#f7f9fc;border-radius:8px;font-size:15px;line-height:2;}</span>
+</div><div align="left">
+ <span style="font-size:16"> .ruleTip{margin-top:12px;padding:12px;background:#fff2e8;border-radius:8px;font-size:14px;color:#c05020;}</span>
+</div><div align="left">
+ <span style="font-size:16"> &lt;/style&gt;</span>
+</div><div align="left">
+ <span style="font-size:16">&lt;/head&gt;</span>
+</div><div align="left">
+ <span style="font-size:16">&lt;body&gt;</span>
+</div><div align="left">
+ <span style="font-size:16">&lt;div&nbsp;class="wrap"&gt;</span>
+</div><div align="left">
+ <span style="font-size:16"> &lt;h2&gt;乒乓球落点计算器(含有激光误差计算)&lt;/h2&gt;</span>
+</div><div align="left">
+ <span style="font-size:16"> &lt;div&nbsp;class="row"&gt;</span>
+</div><div align="left">
+ <span style="font-size:16"> &lt;label&gt;基准射程（90°水平，cm）&lt;/label&gt;</span>
+</div><div align="left">
+ <span style="font-size:16"> &lt;input&nbsp;type="number"&nbsp;id="baseLen"&nbsp;value="80"&nbsp;step="0.1"&gt;</span>
+</div><div align="left">
+ <span style="font-size:16"> &lt;/div&gt;</span>
+</div><div align="left">
+ <span style="font-size:16"> &lt;div&nbsp;class="row"&gt;</span>
+</div><div align="left">
+ <span style="font-size:16"> &lt;label&gt;激光减去长度（cm）&lt;/label&gt;</span>
+</div><div align="left">
+ <span style="font-size:16"> &lt;input&nbsp;type="number"&nbsp;id="laserCut"&nbsp;value="19"&nbsp;min="0"&nbsp;step="0.1"&nbsp;placeholder="输入要减去的厘米数"&gt;</span>
+</div><div align="left">
+ <span style="font-size:16"> &lt;/div&gt;</span>
+</div><br><div align="left">
+ <span style="font-size:16"> &lt;div&nbsp;class="angle-disk"&gt;</span>
+</div><div align="left">
+ <span style="font-size:16"> &lt;div&nbsp;class="disk-bg"&gt;&lt;/div&gt;</span>
+</div><div align="left">
+ <span style="font-size:16"> &lt;div&nbsp;class="line"&nbsp;id="angleLine"&gt;&lt;/div&gt;</span>
+</div><div align="left">
+ <span style="font-size:16"> &lt;div&nbsp;class="dot"&nbsp;id="angleDot"&gt;&lt;/div&gt;</span>
+</div><div align="left">
+ <span style="font-size:16"> &lt;/div&gt;</span>
+</div><div align="left">
+ <span style="font-size:16"> &lt;div&nbsp;class="angle-txt"&gt;当前仰角：&lt;span&nbsp;id="showAngle"&gt;0&lt;/span&gt;&nbsp;°&lt;/div&gt;</span>
+</div><div align="left">
+ <span style="font-size:16"> &lt;div&nbsp;class="row"&gt;</span>
+</div><div align="left">
+ <span style="font-size:16"> &lt;label&gt;手动输入仰角（°）&lt;/label&gt;</span>
+</div><div align="left">
+ <span style="font-size:16"> &lt;input&nbsp;type="number"&nbsp;id="angleInput"&nbsp;placeholder="任意角度"&nbsp;value="90&nbsp;"&gt;</span>
+</div><div align="left">
+ <span style="font-size:16"> &lt;/div&gt;</span>
+</div><div align="left">
+ <span style="font-size:16"> &lt;button&nbsp;onclick="calc()"&gt;开始计算&lt;/button&gt;</span>
+</div><br><div align="left">
+ <span style="font-size:16"> &lt;div&nbsp;class="resBox"&nbsp;id="res"&gt;&lt;/div&gt;</span>
+</div><div align="left">
+ <span style="font-size:16"> &lt;div&nbsp;class="ruleTip"&nbsp;id="ruleTip"&gt;&lt;/div&gt;</span>
+</div><div align="left">
+ <span style="font-size:16">&lt;/div&gt;</span>
+</div><div align="left">
+ <span style="font-size:16">&lt;script&gt;</span>
+</div><div align="left">
+ <span style="font-size:16">const&nbsp;g=9.8,rho=1.225,Cd=0.5,d=0.04,S=Math.PI*(d/2)**2,m=0.0027;</span>
+</div><div align="left">
+ <span style="font-size:16">const&nbsp;bounceRatio=0.55,dt=0.0005,RULE_LEN=40;</span>
+</div><div align="left">
+ <span style="font-size:16">let&nbsp;fireH=0.32,fireV0=0;</span>
+</div><div align="left">
+ <span style="font-size:16">const&nbsp;line=document.getElementById('angleLine');</span>
+</div><div align="left">
+ <span style="font-size:16">const&nbsp;dot=document.getElementById('angleDot');</span>
+</div><div align="left">
+ <span style="font-size:16">const&nbsp;showAngle=document.getElementById('showAngle');</span>
+</div><div align="left">
+ <span style="font-size:16">const&nbsp;angleInput=document.getElementById('angleInput');</span>
+</div><div align="left">
+ <span style="font-size:16">let&nbsp;currentAngle=0,isDrag=false;</span>
+</div><br><div align="left">
+ <span style="font-size:16">function&nbsp;setDiskAngle(deg){</span>
+</div><div align="left">
+ <span style="font-size:16"> deg&nbsp;=&nbsp;((deg&nbsp;%&nbsp;360)&nbsp;+&nbsp;360)&nbsp;%&nbsp;360;</span>
+</div><div align="left">
+ <span style="font-size:16"> currentAngle&nbsp;=&nbsp;deg;</span>
+</div><div align="left">
+ <span style="font-size:16"> line.style.transform&nbsp;=&nbsp;`rotate(${deg&nbsp;-&nbsp;90}deg)`;</span>
+</div><div align="left">
+ <span style="font-size:16"> dot.style.transform&nbsp;=&nbsp;`rotate(${deg&nbsp;-&nbsp;90}deg)&nbsp;translateX(100px)`;</span>
+</div><div align="left">
+ <span style="font-size:16"> showAngle.innerText&nbsp;=&nbsp;deg.toFixed(1);</span>
+</div><div align="left">
+ <span style="font-size:16"> angleInput.value&nbsp;=&nbsp;deg.toFixed(1);</span>
+</div><div align="left">
+ <span style="font-size:16">}</span>
+</div><br><div align="left">
+ <span style="font-size:16">function&nbsp;getAngleFromPos(x,y){</span>
+</div><div align="left">
+ <span style="font-size:16"> let&nbsp;rect&nbsp;=&nbsp;document.querySelector('.angle-disk').getBoundingClientRect();</span>
+</div><div align="left">
+ <span style="font-size:16"> let&nbsp;cx&nbsp;=&nbsp;rect.left&nbsp;+&nbsp;rect.width/2;</span>
+</div><div align="left">
+ <span style="font-size:16"> let&nbsp;cy&nbsp;=&nbsp;rect.top&nbsp;+&nbsp;rect.height/2;</span>
+</div><div align="left">
+ <span style="font-size:16"> let&nbsp;dx&nbsp;=&nbsp;x&nbsp;-&nbsp;cx;</span>
+</div><div align="left">
+ <span style="font-size:16"> let&nbsp;dy&nbsp;=&nbsp;cy&nbsp;-&nbsp;y;</span>
+</div><div align="left">
+ <span style="font-size:16"> let&nbsp;rad&nbsp;=&nbsp;Math.atan2(dx,&nbsp;dy);</span>
+</div><div align="left">
+ <span style="font-size:16"> let&nbsp;deg&nbsp;=&nbsp;rad&nbsp;*&nbsp;180&nbsp;/&nbsp;Math.PI;</span>
+</div><div align="left">
+ <span style="font-size:16"> if(deg&nbsp;&lt;&nbsp;0)&nbsp;deg&nbsp;+=&nbsp;360;</span>
+</div><div align="left">
+ <span style="font-size:16"> return&nbsp;deg;</span>
+</div><div align="left">
+ <span style="font-size:16">}</span>
+</div><br><div align="left">
+ <span style="font-size:16">dot.addEventListener('mousedown',&nbsp;e&nbsp;=&gt;&nbsp;{&nbsp;e.preventDefault();&nbsp;isDrag&nbsp;=&nbsp;true;&nbsp;});</span>
+</div><div align="left">
+ <span style="font-size:16">document.addEventListener('mouseup',&nbsp;()&nbsp;=&gt;&nbsp;isDrag&nbsp;=&nbsp;false);</span>
+</div><div align="left">
+ <span style="font-size:16">document.addEventListener('mousemove',&nbsp;e&nbsp;=&gt;&nbsp;{</span>
+</div><div align="left">
+ <span style="font-size:16"> if(!isDrag)&nbsp;return;</span>
+</div><div align="left">
+ <span style="font-size:16"> e.preventDefault();</span>
+</div><div align="left">
+ <span style="font-size:16"> setDiskAngle(getAngleFromPos(e.clientX,&nbsp;e.clientY));</span>
+</div><div align="left">
+ <span style="font-size:16">});</span>
+</div><br><div align="left">
+ <span style="font-size:16">dot.addEventListener('touchstart',&nbsp;e&nbsp;=&gt;&nbsp;{&nbsp;e.preventDefault();&nbsp;isDrag&nbsp;=&nbsp;true;&nbsp;},&nbsp;{passive:&nbsp;false});</span>
+</div><div align="left">
+ <span style="font-size:16">document.addEventListener('touchend',&nbsp;()&nbsp;=&gt;&nbsp;isDrag&nbsp;=&nbsp;false);</span>
+</div><div align="left">
+ <span style="font-size:16">document.addEventListener('touchmove',&nbsp;e&nbsp;=&gt;&nbsp;{</span>
+</div><div align="left">
+ <span style="font-size:16"> if(!isDrag)&nbsp;return;</span>
+</div><div align="left">
+ <span style="font-size:16"> e.preventDefault();</span>
+</div><div align="left">
+ <span style="font-size:16"> let&nbsp;t&nbsp;=&nbsp;e.touches[0];</span>
+</div><div align="left">
+ <span style="font-size:16"> setDiskAngle(getAngleFromPos(t.clientX,&nbsp;t.clientY));</span>
+</div><div align="left">
+ <span style="font-size:16">},&nbsp;{passive:&nbsp;false});</span>
+</div><br><div align="left">
+ <span style="font-size:16">angleInput.addEventListener('input',&nbsp;()&nbsp;=&gt;&nbsp;{</span>
+</div><div align="left">
+ <span style="font-size:16"> let&nbsp;val&nbsp;=&nbsp;parseFloat(angleInput.value);</span>
+</div><div align="left">
+ <span style="font-size:16"> if(!isNaN(val))&nbsp;setDiskAngle(val);</span>
+</div><div align="left">
+ <span style="font-size:16">});</span>
+</div><br><div align="left">
+ <span style="font-size:16">//&nbsp;模拟函数：返回水平位移和落地时的垂直速度</span>
+</div><div align="left">
+ <span style="font-size:16">function&nbsp;simulate(compassAngle,&nbsp;hStart,&nbsp;v0){</span>
+</div><div align="left">
+ <span style="font-size:16"> let&nbsp;emitAngle&nbsp;=&nbsp;90&nbsp;-&nbsp;compassAngle;</span>
+</div><div align="left">
+ <span style="font-size:16"> let&nbsp;rad&nbsp;=&nbsp;Math.PI&nbsp;/&nbsp;180&nbsp;*&nbsp;emitAngle;</span>
+</div><div align="left">
+ <span style="font-size:16"> let&nbsp;vx&nbsp;=&nbsp;v0&nbsp;*&nbsp;Math.cos(rad);</span>
+</div><div align="left">
+ <span style="font-size:16"> let&nbsp;vy&nbsp;=&nbsp;v0&nbsp;*&nbsp;Math.sin(rad);</span>
+</div><div align="left">
+ <span style="font-size:16"> let&nbsp;x&nbsp;=&nbsp;0,&nbsp;y&nbsp;=&nbsp;hStart;</span>
+</div><div align="left">
+ <span style="font-size:16"> while(y&nbsp;&gt;&nbsp;0){</span>
+</div><div align="left">
+ <span style="font-size:16"> let&nbsp;v&nbsp;=&nbsp;Math.hypot(vx,&nbsp;vy);</span>
+</div><div align="left">
+ <span style="font-size:16"> let&nbsp;drag&nbsp;=&nbsp;0.5&nbsp;*&nbsp;rho&nbsp;*&nbsp;Cd&nbsp;*&nbsp;S&nbsp;*&nbsp;v&nbsp;*&nbsp;v;</span>
+</div><div align="left">
+ <span style="font-size:16"> let&nbsp;ax&nbsp;=&nbsp;-drag&nbsp;*&nbsp;vx&nbsp;/&nbsp;m;</span>
+</div><div align="left">
+ <span style="font-size:16"> let&nbsp;ay&nbsp;=&nbsp;-g&nbsp;-&nbsp;drag&nbsp;*&nbsp;vy&nbsp;/&nbsp;m;</span>
+</div><div align="left">
+ <span style="font-size:16"> vx&nbsp;+=&nbsp;ax&nbsp;*&nbsp;dt;</span>
+</div><div align="left">
+ <span style="font-size:16"> vy&nbsp;+=&nbsp;ay&nbsp;*&nbsp;dt;</span>
+</div><div align="left">
+ <span style="font-size:16"> x&nbsp;+=&nbsp;vx&nbsp;*&nbsp;dt;</span>
+</div><div align="left">
+ <span style="font-size:16"> y&nbsp;+=&nbsp;vy&nbsp;*&nbsp;dt;</span>
+</div><div align="left">
+ <span style="font-size:16"> }</span>
+</div><div align="left">
+ <span style="font-size:16"> return&nbsp;{disX:&nbsp;x,&nbsp;endVy:&nbsp;vy};</span>
+</div><div align="left">
+ <span style="font-size:16">}</span>
+</div><br><div align="left">
+ <span style="font-size:16">function&nbsp;calibrate(baseCm){</span>
+</div><div align="left">
+ <span style="font-size:16"> let&nbsp;target&nbsp;=&nbsp;baseCm&nbsp;/&nbsp;100;</span>
+</div><div align="left">
+ <span style="font-size:16"> let&nbsp;lowV&nbsp;=&nbsp;1.0,&nbsp;highV&nbsp;=&nbsp;5.0;</span>
+</div><div align="left">
+ <span style="font-size:16"> for(let&nbsp;i=0;i&lt;60;i++){</span>
+</div><div align="left">
+ <span style="font-size:16"> let&nbsp;midV&nbsp;=&nbsp;(lowV&nbsp;+&nbsp;highV)&nbsp;/&nbsp;2;</span>
+</div><div align="left">
+ <span style="font-size:16"> simulate(90,&nbsp;fireH,&nbsp;midV).disX&nbsp;&lt;&nbsp;target&nbsp;?&nbsp;lowV&nbsp;=&nbsp;midV&nbsp;:&nbsp;highV&nbsp;=&nbsp;midV;</span>
+</div><div align="left">
+ <span style="font-size:16"> }</span>
+</div><div align="left">
+ <span style="font-size:16"> fireV0&nbsp;=&nbsp;(lowV&nbsp;+&nbsp;highV)&nbsp;/&nbsp;2;</span>
+</div><div align="left">
+ <span style="font-size:16">}</span>
+</div><br><div align="left">
+ <span style="font-size:16">function&nbsp;calcRule(n,&nbsp;cutVal){</span>
+</div><div align="left">
+ <span style="font-size:16"> let&nbsp;realVal&nbsp;=&nbsp;Math.max(-9999,&nbsp;parseFloat(n)&nbsp;-&nbsp;parseFloat(cutVal));</span>
+</div><div align="left">
+ <span style="font-size:16"> return&nbsp;{</span>
+</div><div align="left">
+ <span style="font-size:16"> count:&nbsp;Math.floor(realVal&nbsp;/&nbsp;RULE_LEN),</span>
+</div><div align="left">
+ <span style="font-size:16"> last:&nbsp;(realVal&nbsp;%&nbsp;RULE_LEN).toFixed(1)</span>
+</div><div align="left">
+ <span style="font-size:16"> };</span>
+</div><div align="left">
+ <span style="font-size:16">}</span>
+</div><br><div align="left">
+ <span style="font-size:16">function&nbsp;calc(){</span>
+</div><div align="left">
+ <span style="font-size:16"> let&nbsp;baseCm&nbsp;=&nbsp;parseFloat(document.getElementById("baseLen").value);</span>
+</div><div align="left">
+ <span style="font-size:16"> let&nbsp;laserCut&nbsp;=&nbsp;parseFloat(document.getElementById("laserCut").value)&nbsp;||&nbsp;0;</span>
+</div><div align="left">
+ <span style="font-size:16"> let&nbsp;ang&nbsp;=&nbsp;currentAngle;</span>
+</div><div align="left">
+ <span style="font-size:16"> let&nbsp;res&nbsp;=&nbsp;document.getElementById("res");</span>
+</div><div align="left">
+ <span style="font-size:16"> let&nbsp;ruleTip&nbsp;=&nbsp;document.getElementById("ruleTip");</span>
+</div><br><div align="left">
+ <span style="font-size:16"> if(isNaN(baseCm)&nbsp;||&nbsp;baseCm&nbsp;&lt;=&nbsp;0){</span>
+</div><div align="left">
+ <span style="font-size:16"> res.innerText&nbsp;=&nbsp;"请输入合法基准射程";</span>
+</div><div align="left">
+ <span style="font-size:16"> ruleTip.innerText&nbsp;=&nbsp;"";</span>
+</div><div align="left">
+ <span style="font-size:16"> return;</span>
+</div><div align="left">
+ <span style="font-size:16"> }</span>
+</div><div align="left">
+ <span style="font-size:16"> if(laserCut&nbsp;&lt;&nbsp;0){</span>
+</div><div align="left">
+ <span style="font-size:16"> res.innerText&nbsp;=&nbsp;"减去长度不能为负数";</span>
+</div><div align="left">
+ <span style="font-size:16"> ruleTip.innerText&nbsp;=&nbsp;"";</span>
+</div><div align="left">
+ <span style="font-size:16"> return;</span>
+</div><div align="left">
+ <span style="font-size:16"> }</span>
+</div><br><div align="left">
+ <span style="font-size:16"> calibrate(baseCm);</span>
+</div><br><div align="left">
+ <span style="font-size:16"> //&nbsp;第一段：按罗盘角度发射</span>
+</div><div align="left">
+ <span style="font-size:16"> let&nbsp;p1&nbsp;=&nbsp;simulate(ang,&nbsp;fireH,&nbsp;fireV0);</span>
+</div><div align="left">
+ <span style="font-size:16"> let&nbsp;firstLandX&nbsp;=&nbsp;p1.disX&nbsp;*&nbsp;100;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;转换为厘米</span>
+</div><div align="left">
+ <span style="font-size:16"> let&nbsp;r1&nbsp;=&nbsp;firstLandX.toFixed(2);</span>
+</div><br><div align="left">
+ <span style="font-size:16"> //&nbsp;第二段：从第一个落点弹跳，水平发射，弹跳高度由垂直速度反弹决定</span>
+</div><div align="left">
+ <span style="font-size:16"> let&nbsp;bounceH2&nbsp;=&nbsp;Math.abs(p1.endVy)&nbsp;*&nbsp;bounceRatio&nbsp;/&nbsp;g;</span>
+</div><div align="left">
+ <span style="font-size:16"> let&nbsp;p2&nbsp;=&nbsp;simulate(90,&nbsp;bounceH2,&nbsp;fireV0);</span>
+</div><div align="left">
+ <span style="font-size:16"> let&nbsp;secondLandX&nbsp;=&nbsp;firstLandX&nbsp;+&nbsp;p2.disX&nbsp;*&nbsp;100;</span>
+</div><div align="left">
+ <span style="font-size:16"> let&nbsp;r2&nbsp;=&nbsp;secondLandX.toFixed(2);</span>
+</div><br><div align="left">
+ <span style="font-size:16"> //&nbsp;第三段：从第二个落点弹跳</span>
+</div><div align="left">
+ <span style="font-size:16"> let&nbsp;bounceH3&nbsp;=&nbsp;Math.abs(p2.endVy)&nbsp;*&nbsp;bounceRatio&nbsp;/&nbsp;g;</span>
+</div><div align="left">
+ <span style="font-size:16"> let&nbsp;p3&nbsp;=&nbsp;simulate(90,&nbsp;bounceH3,&nbsp;fireV0);</span>
+</div><div align="left">
+ <span style="font-size:16"> let&nbsp;thirdLandX&nbsp;=&nbsp;secondLandX&nbsp;+&nbsp;p3.disX&nbsp;*&nbsp;100;</span>
+</div><div align="left">
+ <span style="font-size:16"> let&nbsp;r3&nbsp;=&nbsp;thirdLandX.toFixed(2);</span>
+</div><br><div align="left">
+ <span style="font-size:16"> //&nbsp;减去激光误差</span>
+</div><div align="left">
+ <span style="font-size:16"> let&nbsp;realR1&nbsp;=&nbsp;Math.max(-9999,&nbsp;parseFloat(r1)&nbsp;-&nbsp;laserCut).toFixed(2);</span>
+</div><div align="left">
+ <span style="font-size:16"> let&nbsp;realR2&nbsp;=&nbsp;Math.max(-9999,&nbsp;parseFloat(r2)&nbsp;-&nbsp;laserCut).toFixed(2);</span>
+</div><div align="left">
+ <span style="font-size:16"> let&nbsp;realR3&nbsp;=&nbsp;Math.max(-9999,&nbsp;parseFloat(r3)&nbsp;-&nbsp;laserCut).toFixed(2);</span>
+</div><br><div align="left">
+ <span style="font-size:16"> let&nbsp;g1&nbsp;=&nbsp;calcRule(r1,&nbsp;laserCut);</span>
+</div><div align="left">
+ <span style="font-size:16"> let&nbsp;g2&nbsp;=&nbsp;calcRule(r2,&nbsp;laserCut);</span>
+</div><div align="left">
+ <span style="font-size:16"> let&nbsp;g3&nbsp;=&nbsp;calcRule(r3,&nbsp;laserCut);</span>
+</div><br><div align="left">
+ <span style="font-size:16"> res.innerHTML&nbsp;=&nbsp;`基准射程：${baseCm}&nbsp;cm（90°水平）&lt;br&gt;发射仰角：${ang.toFixed(1)}&nbsp;°&lt;br&gt;激光减去：${laserCut.toFixed(1)}&nbsp;cm&lt;br&gt;&lt;br&gt;第一段（初始发射）：${r1}&nbsp;cm&lt;br&gt;第二段（第一次弹跳）：${r2}&nbsp;cm&lt;br&gt;第三段（第二次弹跳）：${r3}&nbsp;cm&lt;br&gt;&lt;br&gt;减去激光误差后：&lt;br&gt;第一段：${realR1}&nbsp;cm&lt;br&gt;第二段：${realR2}&nbsp;cm&lt;br&gt;第三段：${realR3}&nbsp;cm`;</span>
+</div><br><div align="left">
+ <span style="font-size:16"> ruleTip.innerHTML&nbsp;=&nbsp;`📏&nbsp;40cm尺子参考（减后）：&lt;br&gt;第一段：${g1.count}根整尺，剩余&nbsp;${g1.last}&nbsp;cm&lt;br&gt;第二段：${g2.count}根整尺，剩余&nbsp;${g2.last}&nbsp;cm&lt;br&gt;第三段：${g3.count}根整尺，剩余&nbsp;${g3.last}&nbsp;cm`;</span>
+</div><div align="left">
+ <span style="font-size:16">}</span>
+</div><br><div align="left">
+ <span style="font-size:16">//&nbsp;初始化为水平发射（90°）//&nbsp;初始化为水平发射（90°）</span>
+</div><div align="left">
+ <span style="font-size:16">setDiskAngle(90);</span>
+</div><div align="left">
+ <span style="font-size:16">calc();</span>
+</div><div align="left">
+ <span style="font-size:16">&lt;/script&gt;</span>
+</div><div align="left">
+ <span style="font-size:16">&lt;/body&gt;</span>
+</div><div align="left">
+ <span style="font-size:16">&lt;/html&gt;</span>
+</div><p></p></body></html>
